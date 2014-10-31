@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 			/* Increment the counter */
 			long long unsigned int counter = increment_counter();
 			if (counter > 0) {
-				printf("%lld\n", counter);
+				printf("%llu\n", counter);
 				return 0;
 			} else {
 				printf("Error reading/writing counter.\n");
@@ -129,23 +129,23 @@ error (char *message)
 long long unsigned int
 increment_counter()
 {
-	long long unsigned count = -1;
+	long long unsigned count = 0;
 	int done;
 	/* Make sure the counter file is successfully open */
 	if (counter_file == NULL) {
-		/* Error, release the lock and return -1 */
+		/* Error, release the lock and return 0 */
 		error("Unable to open file for reading/writing");
 		close_counter();
-		return -1;
+		return 0;
 	}
 	
 	/* Read the current count */
 	done = fread(&count, sizeof(count), 1, counter_file);
 	if (done < 1) {
-		/* Error, close and return -1 */
+		/* Error, close and return 0 */
 		error("Read error");
 		close_counter();
-		return -1;
+		return 0;
 	}
 	
 	/* Increment the count */
@@ -155,10 +155,10 @@ increment_counter()
 	/* Write the current count into the file */
 	done = fwrite (&count, sizeof(count), 1, counter_file);
 	if (done < 1) {
-		/* Write error, close file and return -1 */
+		/* Write error, close file and return 0 */
 		error("Write error");
 		close_counter();
-		return -1;
+		return 0;
 	}
 	/* Now close the file and remove the lock */
 	close_counter();
@@ -207,7 +207,7 @@ reset_counter()
 	int done;
 	/* Make sure the counter file is successfully open */
 	if (counter_file == NULL) {
-		/* Error, release the lock and return -1 */
+		/* Error, release the lock and return 1 (Error) */
 		error("Error opening the file for reading/writing");
 		close_counter();
 		return 1; /* Error */
